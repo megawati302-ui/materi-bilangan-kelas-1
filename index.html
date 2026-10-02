@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Berhitung - Matematika Kelas 1 SD</title>
+    <style>
+        /* ==========================================================================
+           1. DESAIN VISUAL & CSS RESPONSIVE (Ramah Anak & Warna Ceria)
+           ========================================================================== */
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --bg-color: #F7F9FC;
+            --card-bg: #FFFFFF;
+            --text-color: #2D3436;
+            --correct-color: #2ECC71;
+            --wrong-color: #E67E22;
+            --radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', sans-serif, Arial;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#4ECDC4 10%, transparent 11%), radial-gradient(#FFE66D 10%, transparent 11%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 4px solid var(--secondary-color);
+            overflow: hidden;
+            position: relative;
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Bar */
+        .header-bar {
+            background: var(--secondary-color);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .header-bar button {
+            background: var(--accent-color);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-color);
+            box-shadow: 0 3px 0 #D4AC0D;
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Headings & Typography */
+        h1 { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 10px; text-shadow: 2px 2px 0px #FFE66D; }
+        h2 { font-size: 1.6rem; color: var(--secondary-color); margin-bottom: 15px; }
+        p { font-size: 1.1rem; line-height: 1.5; margin-bottom: 15px; }
+
+        /* Buttons (Besar dan Mudah Disentuh Anak) */
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 8px;
+            box-shadow: 0 5px 0 #C0392B;
+            transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 200px;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #C0392B;
+        }
+
+        .btn-secondary { background: var(--secondary-color); box-shadow: 0 5px 0 #16A085; }
+        .btn-secondary:active { box-shadow: 0 1px 0 #16A085; }
+
+        .btn-accent { background: var(--accent-color); color: var(--text-color); box-shadow: 0 5px 0 #D4AC0D; }
+        .btn-accent:active { box-shadow: 0 1px 0 #D4AC0D; }
+
+        .btn-disabled { background: #BDC3C7 !important; box-shadow: 0 5px 0 #7F8C8D !important; cursor: not-allowed; }
+
+        /* Input Form */
+        input[type="text"] {
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            border: 3px solid var(--secondary-color);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            outline: none;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        /* Menu Utama Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 10px;
+        }
+
+        /* Visual Box untuk Materi & Soal */
+        .visual-box {
+            background: #EBF5FB;
+            border: 3px dashed var(--secondary-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            width: 100%;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 2.2rem;
+            gap: 10px;
+        }
+
+        .object-group {
+            display: inline-flex;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 2px solid #AED6F1;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Pilihan Jawaban Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid var(--secondary-color);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--secondary-color);
+            transition: all 0.1s;
+        }
+
+        .option-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 var(--secondary-color);
+        }
+
+        /* Modal / Feedback Overlay */
+        .feedback-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .feedback-emoji { font-size: 4rem; margin-bottom: 10px; }
+
+        /* Tabel Hasil Belajar */
+        .result-card {
+            background: #F9EBEA;
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #E6B0AA;
+            font-size: 1.1rem;
+        }
+
+        /* CSS Media Query untuk Layar Kecil (HP) */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.3rem; }
+            .btn { width: 100%; font-size: 1rem; padding: 12px; }
+            .options-grid { grid-template-columns: 1fr; }
+            .visual-box { font-size: 1.6rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- BAR NAVIGASI ATAS -->
+    <div class="header-bar">
+        <span id="user-display">👤 Halo, Teman!</span>
+        <button id="btn-home" onclick="showScreen('screen-menu')" style="display:none;">🏠 Menu</button>
+    </div>
+
+    <!-- 1. HALAMAN PEMBUKA -->
+    <div id="screen-welcome" class="screen active">
+        <h1>🎈 Petualangan Berhitung 🎈</h1>
+        <h2>Belajar Penjumlahan & Pengurangan</h2>
+        <div style="font-size: 3.5rem; margin: 15px;">🍎 🍬 🎈 ✏️</div>
+        <p>Masukkan namamu untuk memulai petualangan!</p>
+        <input type="text" id="player-name" placeholder="Nama Lengkap / Panggilan" maxlength="20">
+        <br>
+        <button class="btn" onclick="startApp()">MULAI BELAJAR 🚀</button>
+    </div>
+
+    <!-- 2. MENU UTAMA -->
+    <div id="screen-menu" class="screen">
+        <h2>Pilih Kegiatan Suka-Suka! 🌟</h2>
+        <div class="menu-grid">
+            <button class="btn btn-secondary" onclick="showMateri('addition')">📚 Belajar Penjumlahan</button>
+            <button class="btn btn-secondary" onclick="showMateri('subtraction')">➖ Belajar Pengurangan</button>
+            <button class="btn btn-accent" onclick="selectLevelScreen()">🎮 Latihan Interaktif</button>
+            <button class="btn" onclick="startChallenge()">🏆 Tantangan (Level 3)</button>
+            <button class="btn btn-secondary" onclick="showResults()">📊 Hasil Belajar</button>
+        </div>
+    </div>
+
+    <!-- 3. PILIH LEVEL -->
+    <div id="screen-select-level" class="screen">
+        <h2>Pilih Tingkat Latihan 🎯</h2>
+        <p>Selesaikan level untuk membuka level berikutnya!</p>
+        <button class="btn btn-accent" onclick="startQuiz(1)">Level 1: Pemula (1–5) 🐣</button>
+        <button class="btn btn-accent" id="btn-lvl-2" onclick="startQuiz(2)">Level 2: Berlatih (1–10) 🦊</button>
+        <button class="btn btn-accent" id="btn-lvl-3" onclick="startQuiz(3)">Level 3: Tantangan (1–20) 🦁</button>
+        <br><br>
+        <button class="btn btn-secondary" onclick="showScreen('screen-menu')">Kembali</button>
+    </div>
+
+    <!-- 4. MATERI PEMBELAJARAN (PENJUMLAHAN & PENGURANGAN) -->
+    <div id="screen-materi" class="screen">
+        <h2 id="materi-title">Materi Pembelajaran</h2>
+        <div id="materi-content"></div>
+        <div style="margin-top: 15px;">
+            <button class="btn btn-accent" onclick="nextMateriStep()">Lanjut ➡️</button>
+            <button class="btn btn-secondary" onclick="showScreen('screen-menu')">Menu Utama</button>
+        </div>
+    </div>
+
+    <!-- 5. AREA LATIHAN INTERAKTIF / QUIZ -->
+    <div id="screen-quiz" class="screen">
+        <div style="display: flex; justify-content: space-between; width: 100%; font-weight: bold; margin-bottom: 10px;">
+            <span id="quiz-level-indicator">Level: 1</span>
+            <span id="quiz-progress">Soal 1 / 10</span>
+            <span id="quiz-score">Skor: 0</span>
+        </div>
+
+        <p id="quiz-question-text" style="font-size: 1.3rem; font-weight: bold;"></p>
+        <div id="quiz-visual" class="visual-box"></div>
+
+        <div id="quiz-options" class="options-grid"></div>
+    </div>
+
+    <!-- 6. FEEDBACK OVERLAY (MODAL INTERAKTIF) -->
+    <div id="feedback-modal" class="feedback-overlay">
+        <div id="feedback-icon" class="feedback-emoji">🎉</div>
+        <h2 id="feedback-title">Hebat!</h2>
+        <p id="feedback-msg">Jawabanmu benar sekali!</p>
+        <div id="feedback-hint" style="font-size: 0.95rem; color: #7F8C8D; margin-bottom: 10px;"></div>
+        <div>
+            <button id="btn-feedback-next" class="btn" onclick="nextQuestion()">Soal Berikutnya ➡️</button>
+            <button id="btn-feedback-retry" class="btn btn-accent" onclick="retryQuestion()" style="display:none;">Coba Lagi 🔄</button>
+        </div>
+    </div>
+
+    <!-- 7. HALAMAN HASIL BELAJAR -->
+    <div id="screen-result" class="screen">
+        <h2>📊 Hasil Belajar Kamu</h2>
+        <div class="result-card">
+            <div class="result-item"><span>Nama Peserta Didik:</span><b id="res-name">-</b></div>
+            <div class="result-item"><span>Level yang Dikerjakan:</span><b id="res-level">-</b></div>
+            <div class="result-item"><span>Jumlah Soal:</span><b id="res-total">-</b></div>
+            <div class="result-item"><span>Jawaban Benar:</span><b id="res-correct" style="color:var(--correct-color);">-</b></div>
+            <div class="result-item"><span>Jawaban Salah:</span><b id="res-wrong" style="color:var(--wrong-color);">-</b></div>
+            <div class="result-item"><span>Total Skor:</span><b id="res-score">-</b></div>
+            <div class="result-item"><span>Persentase:</span><b id="res-percent">-</b></div>
+        </div>
+
+        <h3 id="res-badge" style="margin-bottom: 10px;">🌟 Luar Biasa!</h3>
+        <p id="res-motivation">Kamu sangat pintar, terus pertahankan ya!</p>
+
+        <div>
+            <button class="btn" onclick="selectLevelScreen()">ULANGI LATIHAN 🔄</button>
+            <button class="btn btn-secondary" onclick="exportToCSV()">EKSPOR (CSV) 📥</button>
+            <button class="btn btn-accent" onclick="resetData()">RESET DATA ⚠️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ==========================================================================
+   2. LOGIKA JAVASCRIPT MURNI (Vanilla JS)
+   ========================================================================== */
+
+// --- DATA STATE APLIKASI ---
+let currentPlayer = {
+    name: "Teman",
+    maxLevelUnlocked: 1,
+    lastScore: 0,
+    lastPercent: 0,
+    lastLevel: 1,
+    totalPractice: 0
+};
+
+let currentQuiz = {
+    level: 1,
+    questions: [],
+    currentIndex: 0,
+    score: 0,
+    correctCount: 0,
+    wrongCount: 0,
+    currentQuestionAttempted: false
+};
+
+let currentMateriState = {
+    type: 'addition',
+    step: 0
+};
+
+/* ==========================================================================
+   3. BANK SOAL (Min 30 Soal Terstruktur untuk Guru)
+   ========================================================================== */
+const questionBank = [
+    // --- LEVEL 1: Pemula (Bilangan 1–5, Gambar Melimpah) ---
+    { id: 1, level: 1, type: "addition", question: "Berapa jumlah apel di bawah ini?", visual: "🍎🍎 + 🍎", options: ["2", "3", "4"], answer: "3", explanation: "2 apel ditambah 1 apel sama dengan 3 apel." },
+    { id: 2, level: 1, type: "addition", question: "Hitung semua bintang berikut!", visual: "⭐⭐ + ⭐⭐", options: ["3", "4", "5"], answer: "4", explanation: "2 bintang ditambah 2 bintang menjadi 4 bintang." },
+    { id: 3, level: 1, type: "addition", question: "1 + 2 = ...", visual: "🍬 + 🍬🍬", options: ["3", "4", "2"], answer: "3", explanation: "1 permen ditambah 2 permen sama dengan 3 permen." },
+    { id: 4, level: 1, type: "subtraction", question: "Ada 3 balon, pecah 1. Sisa berapa?", visual: "🎈🎈🎈 (diambil 1)", options: ["1", "2", "3"], answer: "2", explanation: "3 balon dikurangi 1 sisa 2 balon." },
+    { id: 5, level: 1, type: "subtraction", question: "4 - 2 = ...", visual: "🐱🐱🐱🐱 (silang 2)", options: ["1", "2", "3"], answer: "2", explanation: "4 ekor kucing diambil 2 ekor sisa 2 ekor." },
+    { id: 6, level: 1, type: "addition", question: "3 + 2 = ...", visual: "✏️✏️✏️ + ✏️✏️", options: ["5", "4", "3"], answer: "5", explanation: "3 pensil gabung 2 pensil jadi 5 pensil." },
+    { id: 7, level: 1, type: "subtraction", question: "5 - 1 = ...", visual: "🐥🐥🐥🐥🐥 (diambil 1)", options: ["3", "4", "5"], answer: "4", explanation: "5 anak ayam berkurang 1 sisa 4 anak ayam." },
+    { id: 8, level: 1, type: "addition", question: "Lengkapi: 2 + ... = 3", visual: "🌸🌸 + 🌸", options: ["1", "2", "3"], answer: "1", explanation: "2 butuh 1 lagi supaya menjadi 3." },
+    { id: 9, level: 1, type: "story", question: "Budi punya 2 mobil. Ayah beri 1 lagi. Berapa mobil Budi?", visual: "🚗🚗 + 🚗", options: ["2", "3", "4"], answer: "3", explanation: "2 mobil ditambah 1 mobil sama dengan 3 mobil." },
+    { id: 10, level: 1, type: "subtraction", question: "5 - 3 = ...", visual: "🍌🍌🍌🍌🍌 (dimakan 3)", options: ["1", "2", "3"], answer: "2", explanation: "5 pisang dimakan 3 sisa 2 pisang." },
+
+    // --- LEVEL 2: Berlatih (Bilangan 1–10, Campuran) ---
+    { id: 11, level: 2, type: "addition", question: "5 + 3 = ...", visual: "🖐️ + 🖐️✌️", options: ["7", "8", "9"], answer: "8", explanation: "5 ditambah 3 hasilnya adalah 8." },
+    { id: 12, level: 2, type: "subtraction", question: "7 - 2 = ...", visual: "🍎🍎🍎🍎🍎🍎🍎 (-2)", options: ["4", "5", "6"], answer: "5", explanation: "7 dikurangi 2 sisa 5." },
+    { id: 13, level: 2, type: "addition", question: "4 + 4 = ...", visual: "⚽⚽⚽⚽ + ⚽⚽⚽⚽", options: ["6", "8", "10"], answer: "8", explanation: "4 bola gabung 4 bola jadi 8 bola." },
+    { id: 14, level: 2, type: "subtraction", question: "10 - 4 = ...", visual: "🎈 (Jumlah 10) - 4", options: ["5", "6", "7"], answer: "6", explanation: "10 dikurangi 4 hasilnya adalah 6." },
+    { id: 15, level: 2, type: "story", question: "Siti punya 6 Biskuit. Dimakan 2. Berapa sisanya?", visual: "🍪🍪🍪🍪🍪🍪", options: ["4", "5", "3"], answer: "4", explanation: "6 biskuit dikurangi 2 dimakan sisa 4." },
+    { id: 16, level: 2, type: "addition", question: "6 + 3 = ...", visual: "⭐ (6) + ⭐ (3)", options: ["8", "9", "10"], answer: "9", explanation: "6 ditambah 3 sama dengan 9." },
+    { id: 17, level: 2, type: "subtraction", question: "8 - 5 = ...", visual: "🐟 (8 ekor) - 5 ekor", options: ["2", "3", "4"], answer: "3", explanation: "8 dikurangi 5 sisa 3." },
+    { id: 18, level: 2, type: "addition", question: "Lengkapi angka yang hilang: 5 + ... = 10", visual: "🖐️ + 🖐️ = 🖐️🖐️", options: ["4", "5", "6"], answer: "5", explanation: "5 tambah 5 menjadi 10." },
+    { id: 19, level: 2, type: "story", question: "Ada 4 burung di pohon. Datang lagi 5 burung. Berapa totalnya?", visual: "🐦(4) + 🐦(5)", options: ["8", "9", "10"], answer: "9", explanation: "4 gabung 5 menjadi 9 burung." },
+    { id: 20, level: 2, type: "subtraction", question: "9 - 4 = ...", visual: "✏️ (9) - 4", options: ["5", "6", "4"], answer: "5", explanation: "9 dikurangi 4 hasilnya 5." },
+
+    // --- LEVEL 3: Tantangan (Bilangan Maksimal 20, Bantuan Visual Minimal) ---
+    { id: 21, level: 3, type: "addition", question: "10 + 5 = ...", visual: "📦 (10) + 🍬 (5)", options: ["14", "15", "16"], answer: "15", explanation: "10 ditambah 5 sama dengan 15." },
+    { id: 22, level: 3, type: "subtraction", question: "15 - 5 = ...", visual: "🔢 15 - 5", options: ["10", "9", "11"], answer: "10", explanation: "15 dikurangi 5 sisa 10." },
+    { id: 23, level: 3, type: "addition", question: "12 + 4 = ...", visual: "🔢 12 + 4", options: ["15", "16", "17"], answer: "16", explanation: "12 ditambah 4 hasilnya 16." },
+    { id: 24, level: 3, type: "subtraction", question: "18 - 6 = ...", visual: "🔢 18 - 6", options: ["11", "12", "13"], answer: "12", explanation: "18 dikurangi 6 sama dengan 12." },
+    { id: 25, level: 3, type: "story", question: "Dono punya 11 kelereng. Diberi kakak 4 kelereng lagi. Berapa kelereng Dono?", visual: "🔮 (11) + 🔮 (4)", options: ["14", "15", "16"], answer: "15", explanation: "11 + 4 = 15 kelereng." },
+    { id: 26, level: 3, type: "story", question: "Ibu membeli 16 telur. Pecah 3 di jalan. Berapa telur yang utuh?", visual: "🥚 (16) - 3", options: ["12", "13", "14"], answer: "13", explanation: "16 telur dikurangi 3 yang pecah sisa 13." },
+    { id: 27, level: 3, type: "addition", question: "7 + 8 = ...", visual: "🔢 7 + 8", options: ["14", "15", "16"], answer: "15", explanation: "7 ditambah 8 hasilnya adalah 15." },
+    { id: 28, level: 3, type: "subtraction", question: "20 - 5 = ...", visual: "🔢 20 - 5", options: ["15", "14", "16"], answer: "15", explanation: "20 dikurangi 5 sisa 15." },
+    { id: 29, level: 3, type: "addition", question: "11 + 7 = ...", visual: "🔢 11 + 7", options: ["17", "18", "19"], answer: "18", explanation: "11 ditambah 7 sama dengan 18." },
+    { id: 30, level: 3, type: "story", question: "Ada 14 anak bermain di taman. Pulang 4 anak. Berapa anak yang tersisa?", visual: "🏃 (14) - 4", options: ["10", "11", "9"], answer: "10", explanation: "14 dikurangi 4 sisa 10 anak." }
+];
+
+/* ==========================================================================
+   4. INISIALISASI & NAVIGASI
+   ========================================================================== */
+window.onload = function() {
+    loadLocalStorage();
+};
+
+function startApp() {
+    const input = document.getElementById('player-name').value.trim();
+    if (input !== "") {
+        currentPlayer.name = input;
+    }
+    document.getElementById('user-display').innerText = "👤 Halo, " + currentPlayer.name + "!";
+    document.getElementById('btn-home').style.display = "block";
+    saveLocalStorage();
+    showScreen('screen-menu');
+}
+
+function showScreen(screenId) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    
+    // Update tombol navigasi level berdasarkan ketersediaan
+    updateLevelButtons();
+}
+
+function selectLevelScreen() {
+    showScreen('screen-select-level');
+}
+
+function updateLevelButtons() {
+    const btnLvl2 = document.getElementById('btn-lvl-2');
+    const btnLvl3 = document.getElementById('btn-lvl-3');
+
+    if (currentPlayer.maxLevelUnlocked < 2) {
+        btnLvl2.classList.add('btn-disabled');
+        btnLvl2.innerText = "Level 2: Berlatih (Terkunci 🔒)";
+    } else {
+        btnLvl2.classList.remove('btn-disabled');
+        btnLvl2.innerText = "Level 2: Berlatih (1–10) 🦊";
+    }
+
+    if (currentPlayer.maxLevelUnlocked < 3) {
+        btnLvl3.classList.add('btn-disabled');
+        btnLvl3.innerText = "Level 3: Tantangan (Terkunci 🔒)";
+    } else {
+        btnLvl3.classList.remove('btn-disabled');
+        btnLvl3.innerText = "Level 3: Tantangan (1–20) 🦁";
+    }
+}
+
+/* ==========================================================================
+   5. MODUL MATERI PEMBELAJARAN
+   ========================================================================== */
+const materiData = {
+    addition: [
+        {
+            title: "Belajar Penjumlahan 🍎",
+            html: `<p>Penjumlahan artinya <b>MENGGABUNGKAN</b> dua kelompok benda menjadi satu.</p>
+                   <div class="visual-box">
+                       <div class="object-group">🍎🍎<br><small>(2 Apel)</small></div>
+                       <span>+</span>
+                       <div class="object-group">🍎<br><small>(1 Apel)</small></div>
+                   </div>
+                   <p>Ayo kita gabungkan bersama!</p>`
+        },
+        {
+            title: "Hasil Penjumlahan ➕",
+            html: `<p>Jika 2 apel digabungkan dengan 1 apel, kita hitung semuanya:</p>
+                   <div class="visual-box">
+                       <div class="object-group">🍎 🍎 🍎</div>
+                   </div>
+                   <p style="font-size: 1.5rem; color: var(--primary-color);"><b>2 + 1 = 3</b></p>
+                   <p>Jumlah apel sekarang menjadi <b>3</b>!</p>`
+        }
+    ],
+    subtraction: [
+        {
+            title: "Belajar Pengurangan ➖",
+            html: `<p>Pengurangan artinya <b>MENGAMBIL</b> atau membuang sebagian benda.</p>
+                   <div class="visual-box">
+                       <div class="object-group">🍎 🍎 🍎 🍎<br><small>(Ada 4 Apel)</small></div>
+                   </div>
+                   <p>Bayangkan kamu mengambil <b>1 apel</b> untuk dimakan.</p>`
+        },
+        {
+            title: "Hasil Pengurangan ✂️",
+            html: `<p>4 Apel diambil 1 Apel:</p>
+                   <div class="visual-box">
+                       <div class="object-group">🍎 🍎 🍎 <span style="opacity:0.3; text-decoration:line-through;">🍎</span></div>
+                   </div>
+                   <p style="font-size: 1.5rem; color: var(--primary-color);"><b>4 - 1 = 3</b></p>
+                   <p>Sisa apel yang belum dimakan adalah <b>3</b>!</p>`
+        }
+    ]
+};
+
+function showMateri(type) {
+    currentMateriState.type = type;
+    currentMateriState.step = 0;
+    renderMateri();
+    showScreen('screen-materi');
+}
+
+function renderMateri() {
+    const list = materiData[currentMateriState.type];
+    const data = list[currentMateriState.step];
+    document.getElementById('materi-title').innerText = data.title;
+    document.getElementById('materi-content').innerHTML = data.html;
+}
+
+function nextMateriStep() {
+    const list = materiData[currentMateriState.type];
+    if (currentMateriState.step < list.length - 1) {
+        currentMateriState.step++;
+        renderMateri();
+    } else {
+        selectLevelScreen();
+    }
+}
+
+/* ==========================================================================
+   6. LOGIKA QUIZ / LATIHAN INTERAKTIF
+   ========================================================================== */
+function startQuiz(level) {
+    if (level > currentPlayer.maxLevelUnlocked) {
+        alert("Selesaikan level sebelumnya dulu ya! 😊");
+        return;
+    }
+
+    currentQuiz.level = level;
+    currentQuiz.score = 0;
+    currentQuiz.correctCount = 0;
+    currentQuiz.wrongCount = 0;
+    currentQuiz.currentIndex = 0;
+
+    // Filter bank soal sesuai level lalu acak (shuffle)
+    let filtered = questionBank.filter(q => q.level === level);
+    currentQuiz.questions = shuffleArray(filtered).slice(0, 10); // Ambil 10 soal acak
+
+    showScreen('screen-quiz');
+    displayQuestion();
+}
+
+function startChallenge() {
+    startQuiz(3);
+}
+
+function displayQuestion() {
+    const q = currentQuiz.questions[currentQuiz.currentIndex];
+    currentQuiz.currentQuestionAttempted = false;
+
+    document.getElementById('quiz-level-indicator').innerText = "Level: " + currentQuiz.level;
+    document.getElementById('quiz-progress').innerText = "Soal " + (currentQuiz.currentIndex + 1) + " / " + currentQuiz.questions.length;
+    document.getElementById('quiz-score').innerText = "Skor: " + currentQuiz.score;
+
+    document.getElementById('quiz-question-text').innerText = q.question;
+    document.getElementById('quiz-visual').innerText = q.visual;
+
+    // Acak posisi pilihan jawaban
+    const shuffledOptions = shuffleArray([...q.options]);
+    const optionsContainer = document.getElementById('quiz-options');
+    optionsContainer.innerHTML = "";
+
+    shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = function() { checkAnswer(opt); };
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function checkAnswer(selectedOption) {
+    const q = currentQuiz.questions[currentQuiz.currentIndex];
+    const isCorrect = (selectedOption === q.answer);
+
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('feedback-title');
+    const msg = document.getElementById('feedback-msg');
+    const icon = document.getElementById('feedback-icon');
+    const hint = document.getElementById('feedback-hint');
+    const btnNext = document.getElementById('btn-feedback-next');
+    const btnRetry = document.getElementById('btn-feedback-retry');
+
+    modal.style.display = "flex";
+
+    if (isCorrect) {
+        if (!currentQuiz.currentQuestionAttempted) {
+            currentQuiz.score += 10;
+            currentQuiz.correctCount++;
+        }
+        icon.innerText = "🎉";
+        title.innerText = "Hebat! Jawabanmu Benar!";
+        title.style.color = "var(--correct-color)";
+        msg.innerText = q.explanation;
+        hint.innerText = "";
+        btnNext.style.display = "inline-flex";
+        btnRetry.style.display = "none";
+    } else {
+        currentQuiz.currentQuestionAttempted = true;
+        icon.innerText = "😊";
+        title.innerText = "Belum Tepat, Yuk Coba Lagi!";
+        title.style.color = "var(--wrong-color)";
+        msg.innerText = "Jangan berkecil hati, kamu pasti bisa!";
+        hint.innerText = "Petunjuk: Coba hitung lagi gambarnya pelan-pelan ya.";
+        btnNext.style.display = "none";
+        btnRetry.style.display = "inline-flex";
+    }
+}
+
+function retryQuestion() {
+    document.getElementById('feedback-modal').style.display = "none";
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = "none";
+    currentQuiz.currentIndex++;
+
+    if (currentQuiz.currentIndex < currentQuiz.questions.length) {
+        displayQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function finishQuiz() {
+    const total = currentQuiz.questions.length;
+    const percent = Math.round((currentQuiz.correctCount / total) * 100);
+
+    // Buka level berikutnya jika persentase >= 70%
+    if (percent >= 70 && currentQuiz.level === currentPlayer.maxLevelUnlocked && currentPlayer.maxLevelUnlocked < 3) {
+        currentPlayer.maxLevelUnlocked++;
+    }
+
+    currentPlayer.lastScore = currentQuiz.score;
+    currentPlayer.lastPercent = percent;
+    currentPlayer.lastLevel = currentQuiz.level;
+    currentPlayer.totalPractice++;
+
+    saveLocalStorage();
+    showResults();
+}
+
+/* ==========================================================================
+   7. HALAMAN HASIL & EVALUASI
+   ========================================================================== */
+function showResults() {
+    showScreen('screen-result');
+
+    document.getElementById('res-name').innerText = currentPlayer.name;
+    document.getElementById('res-level').innerText = "Level " + currentPlayer.lastLevel;
+    document.getElementById('res-total').innerText = "10 Soal";
+    document.getElementById('res-correct').innerText = Math.round((currentPlayer.lastPercent / 100) * 10) + " Soal";
+    document.getElementById('res-wrong').innerText = (10 - Math.round((currentPlayer.lastPercent / 100) * 10)) + " Soal";
+    document.getElementById('res-score').innerText = currentPlayer.lastScore;
+    document.getElementById('res-percent').innerText = currentPlayer.lastPercent + "%";
+
+    const badge = document.getElementById('res-badge');
+    const msg = document.getElementById('res-motivation');
+
+    if (currentPlayer.lastPercent >= 90) {
+        badge.innerText = "🌟 Luar Biasa!";
+        badge.style.color = "#F1C40F";
+        msg.innerText = "Luar biasa! Kamu adalah juara berhitung!";
+    } else if (currentPlayer.lastPercent >= 70) {
+        badge.innerText = "⭐ Hebat!";
+        badge.style.color = "#2ECC71";
+        msg.innerText = "Hebat sekali! Kamu sudah memahami materi dengan sangat baik!";
+    } else if (currentPlayer.lastPercent >= 50) {
+        badge.innerText = "😊 Terus Berlatih!";
+        badge.style.color = "#E67E22";
+        msg.innerText = "Bagus! Terus berlatih ya agar nilaimu makin bagus!";
+    } else {
+        badge.innerText = "💪 Ayo Belajar Lagi!";
+        badge.style.color = "#E74C3C";
+        msg.innerText = "Jangan menyerah ya! Mari kita coba pelajari materinya lagi bersama-sama.";
+    }
+}
+
+/* ==========================================================================
+   8. UTILITY, LOCALSTORAGE, DAN EKSPOR CSV
+   ========================================================================== */
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function saveLocalStorage() {
+    localStorage.setItem('matematika_sd_data', JSON.stringify(currentPlayer));
+}
+
+function loadLocalStorage() {
+    const saved = localStorage.getItem('matematika_sd_data');
+    if (saved) {
+        currentPlayer = JSON.parse(saved);
+        if (currentPlayer.name && currentPlayer.name !== "Teman") {
+            document.getElementById('player-name').value = currentPlayer.name;
+        }
+    }
+}
+
+function resetData() {
+    if (confirm("Apakah Guru / Orang Tua yakin ingin menghapus seluruh data rekap siswa?")) {
+        localStorage.removeItem('matematika_sd_data');
+        currentPlayer = {
+            name: "Teman",
+            maxLevelUnlocked: 1,
+            lastScore: 0,
+            lastPercent: 0,
+            lastLevel: 1,
+            totalPractice: 0
+        };
+        alert("Data telah berhasil direset!");
+        showScreen('screen-welcome');
+    }
+}
+
+function exportToCSV() {
+    const dateStr = new Date().toLocaleDateString('id-ID');
+    let ket = "Perlu Pendampingan";
+    if (currentPlayer.lastPercent >= 90) ket = "Luar Biasa";
+    else if (currentPlayer.lastPercent >= 70) ket = "Hebat";
+    else if (currentPlayer.lastPercent >= 50) ket = "Terus Berlatih";
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + "No,Nama Peserta Didik,Level,Jumlah Soal,Benar,Salah,Skor,Persentase,Tanggal,Keterangan\n"
+        + `1,${currentPlayer.name},Level ${currentPlayer.lastLevel},10,${Math.round((currentPlayer.lastPercent/100)*10)},${10 - Math.round((currentPlayer.lastPercent/100)*10)},${currentPlayer.lastScore},${currentPlayer.lastPercent}%,${dateStr},${ket}`;
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Rekap_Nilai_${currentPlayer.name.replace(/\s+/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+</body>
+</html>
